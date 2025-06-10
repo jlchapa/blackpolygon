@@ -7,6 +7,7 @@ class DigitsGame extends HTMLElement {
     this.score = 0;
     this.round = 1;
     this.showing = false;
+    this.best = parseInt(localStorage.getItem('digits-best') || '0', 10);
   }
 
   connectedCallback() {
@@ -28,6 +29,7 @@ class DigitsGame extends HTMLElement {
           font-size: 2em;
           letter-spacing: 0.2em;
           min-height: 1.5em;
+          color: var(--accent-color);
         }
         input {
           font-size: 1em;
@@ -39,7 +41,7 @@ class DigitsGame extends HTMLElement {
           min-height: 1.2em;
         }
       </style>
-      <div class="score">Score: <span id="score">0</span></div>
+      <div class="score">Score: <span id="score">0</span> | Best: <span id="best">${this.best}</span></div>
       <div class="digits" id="digits"></div>
       <div id="inputArea">
         <input id="answer" type="text" autocomplete="off"/>
@@ -57,6 +59,7 @@ class DigitsGame extends HTMLElement {
   start() {
     this.score = 0;
     this.round = 1;
+    this.best = parseInt(localStorage.getItem('digits-best') || '0', 10);
     this.updateScore();
     this.nextRound();
   }
@@ -92,6 +95,11 @@ class DigitsGame extends HTMLElement {
 
   gameOver() {
     const msg = this.shadowRoot.getElementById('message');
+    if (this.score > this.best) {
+      this.best = this.score;
+      localStorage.setItem('digits-best', this.best);
+      this.shadowRoot.getElementById('best').textContent = this.best;
+    }
     msg.textContent = 'Wrong! Click here or press Enter to restart.';
     const restart = () => {
       msg.textContent = '';
@@ -110,6 +118,7 @@ class DigitsGame extends HTMLElement {
 
   updateScore() {
     this.shadowRoot.getElementById('score').textContent = this.score;
+    this.shadowRoot.getElementById('best').textContent = this.best;
   }
 
   sleep(ms) {

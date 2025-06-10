@@ -1,3 +1,5 @@
+const tones = [220, 247, 262, 294, 330, 349, 392, 440, 494];
+
 class SequenceGame extends HTMLElement {
   constructor() {
     super();
@@ -6,6 +8,8 @@ class SequenceGame extends HTMLElement {
     this.userInput = [];
     this.score = 0;
     this.flashing = false;
+    this.best = parseInt(localStorage.getItem('sequence-best') || '0', 10);
+    this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   }
 
   connectedCallback() {
@@ -36,14 +40,14 @@ class SequenceGame extends HTMLElement {
           cursor: pointer;
         }
         .cell.active {
-          background: #5da9e9;
+          background: var(--accent-color);
         }
         .message {
           margin-top: 1em;
           min-height: 1.2em;
         }
       </style>
-      <div class="score">Score: <span id="score">0</span></div>
+      <div class="score">Score: <span id="score">0</span> | Best: <span id="best">${this.best}</span></div>
       <div class="grid">
         ${Array.from({ length: 9 })
           .map((_, i) => `<div class="cell" data-index="${i}"></div>`)
@@ -59,6 +63,7 @@ class SequenceGame extends HTMLElement {
   start() {
     this.sequence = [];
     this.score = 0;
+    this.best = parseInt(localStorage.getItem('sequence-best') || '0', 10);
     this.updateScore();
     this.nextRound();
   }
@@ -82,6 +87,7 @@ class SequenceGame extends HTMLElement {
     const cell = this.shadowRoot.querySelector(`.cell[data-index="${index}"]`);
     return new Promise((resolve) => {
       cell.classList.add('active');
+      this.playTone(index);
       setTimeout(() => {
         cell.classList.remove('active');
         setTimeout(resolve, 200);
@@ -107,6 +113,11 @@ class SequenceGame extends HTMLElement {
 
   gameOver() {
     const msg = this.shadowRoot.getElementById('message');
+    if (this.score > this.best) {
+      this.best = this.score;
+      localStorage.setItem('sequence-best', this.best);
+      this.shadowRoot.getElementById('best').textContent = this.best;
+    }
     msg.textContent = 'Wrong! Click to restart.';
     this.shadowRoot.querySelectorAll('.cell').forEach((c) => {
       c.addEventListener(
@@ -122,6 +133,20 @@ class SequenceGame extends HTMLElement {
 
   updateScore() {
     this.shadowRoot.getElementById('score').textContent = this.score;
+    this.shadowRoot.getElementById('best').textContent = this.best;
+  }
+
+  playTone(index) {
+    const osc = this.audioCtx.createOscillator();
+    const gain = this.audioCtx.createGain();
+    osc.frequency.value = tones[index];
+    osc.type = 'sine';
+    osc.connect(gain);
+    gain.connect(this.audioCtx.destination);
+    osc.start();
+    gain.gain.setValueAtTime(0.2, this.audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + 0.4);
+    osc.stop(this.audioCtx.currentTime + 0.4);
   }
 
   sleep(ms) {
