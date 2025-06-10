@@ -9,13 +9,26 @@
 </head>
 <body>
   <h1>Settings</h1>
-  <p>
-    <button id="theme-toggle">Toggle Theme</button>
-  </p>
+  <div class="toggle-wrapper">
+    <div id="theme-toggle" class="toggle"><div class="handle"></div></div>
+  </div>
+  <h2>Progress</h2>
+  <progress-calendar></progress-calendar>
   <p><a href="index.html"><button>Back</button></a></p>
   <script type="module">
     import { toggleTheme } from './theme.js';
-    document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+    import './progress-calendar.js';
+    const toggleEl = document.getElementById('theme-toggle');
+    function syncToggle() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      if (current === 'dark') toggleEl.classList.add('on');
+      else toggleEl.classList.remove('on');
+    }
+    toggleEl.addEventListener('click', () => {
+      toggleTheme();
+      toggleEl.classList.toggle('on');
+    });
+    syncToggle();
   </script>
 </body>
 </html>

@@ -1,3 +1,4 @@
+import { addProgress } from '../progress.js';
 const tones = [220, 247, 262, 294, 330, 349, 392, 440, 494];
 
 class SequenceGame extends HTMLElement {
@@ -23,6 +24,7 @@ class SequenceGame extends HTMLElement {
         :host {
           display: block;
           max-width: 400px;
+          margin: 0 auto;
         }
         .score {
           margin: 0.5em 0;
@@ -57,7 +59,7 @@ class SequenceGame extends HTMLElement {
     `;
     this.shadowRoot
       .querySelectorAll('.cell')
-      .forEach((c) => c.addEventListener('click', (e) => this.handleClick(e)));
+      .forEach((c) => c.addEventListener('pointerdown', (e) => this.handleClick(e)));
   }
 
   start() {
@@ -106,6 +108,7 @@ class SequenceGame extends HTMLElement {
     }
     if (this.userInput.length === this.sequence.length) {
       this.score++;
+      addProgress();
       this.updateScore();
       this.nextRound();
     }
@@ -118,10 +121,10 @@ class SequenceGame extends HTMLElement {
       localStorage.setItem('sequence-best', this.best);
       this.shadowRoot.getElementById('best').textContent = this.best;
     }
-    msg.textContent = 'Wrong! Click to restart.';
+    msg.textContent = 'Wrong! Tap a cell to restart.';
     this.shadowRoot.querySelectorAll('.cell').forEach((c) => {
       c.addEventListener(
-        'click',
+        'pointerdown',
         () => {
           msg.textContent = '';
           this.start();
