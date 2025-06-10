@@ -17,6 +17,11 @@ body {
   text-align: center;
   background: var(--bg-color);
   color: var(--text-color);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 button {
@@ -33,4 +38,47 @@ button {
 button:disabled {
   opacity: 0.6;
   cursor: default;
+}
+
+.toggle {
+  width: 40px;
+  height: 20px;
+  border-radius: 10px;
+  background: #ccc;
+  position: relative;
+  margin: 0.5em auto;
+}
+.toggle .handle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  transition: left 0.2s;
+}
+.toggle.on {
+  background: var(--accent-color);
+}
+.toggle.on .handle {
+  left: 21px;
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  max-width: 280px;
+  margin: 0 auto 1em;
+}
+.calendar .day {
+  border: 1px solid var(--accent-color);
+  padding: 4px;
+  border-radius: 4px;
+  font-size: 0.8em;
+}
+.calendar .count {
+  display: block;
+  font-weight: bold;
 }

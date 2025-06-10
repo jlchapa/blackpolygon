@@ -1,3 +1,5 @@
+import { addProgress } from '../progress.js';
+
 class DigitsGame extends HTMLElement {
   constructor() {
     super();
@@ -21,6 +23,7 @@ class DigitsGame extends HTMLElement {
         :host {
           display: block;
           max-width: 400px;
+          margin: 0 auto;
         }
         .score {
           margin: 0.5em 0;
@@ -85,6 +88,7 @@ class DigitsGame extends HTMLElement {
     const value = this.answerField.value.trim();
     if (value === this.sequence) {
       this.score++;
+      addProgress();
       this.round++;
       this.updateScore();
       this.nextRound();

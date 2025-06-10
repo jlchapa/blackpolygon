@@ -1,3 +1,4 @@
+import { addProgress } from '../progress.js';
 const tones = [220, 247, 262, 294, 330];
 
 class ShapesGame extends HTMLElement {
@@ -19,16 +20,16 @@ class ShapesGame extends HTMLElement {
   render() {
     this.shadowRoot.innerHTML = `
       <style>
-        :host { display:block; max-width:400px; }
+        :host { display:block; max-width:400px; margin:0 auto; }
         .score { margin:0.5em 0; }
         .sequence { min-height:80px; margin:1em 0; }
         .shapes { display:flex; justify-content:space-around; }
         .shape { width:40px; height:40px; cursor:pointer; }
-        .circle { border-radius:50%; background:var(--accent-color); }
-        .square { background:var(--accent-color); }
-        .triangle { width:0; height:0; border-left:20px solid transparent; border-right:20px solid transparent; border-bottom:40px solid var(--accent-color); }
-        .star { color:var(--accent-color); font-size:40px; line-height:40px; }
-        .diamond { transform:rotate(45deg); background:var(--accent-color); width:28px; height:28px; margin-top:6px; }
+        .circle { border-radius:50%; background:#e74c3c; }
+        .square { background:#3498db; }
+        .triangle { width:0; height:0; border-left:20px solid transparent; border-right:20px solid transparent; border-bottom:40px solid #f1c40f; }
+        .star { color:#9b59b6; font-size:40px; line-height:40px; }
+        .diamond { transform:rotate(45deg); background:#2ecc71; width:28px; height:28px; margin-top:6px; }
       </style>
       <div class="score">Score: <span id="score">0</span> | Best: <span id="best">${this.best}</span></div>
       <div class="sequence" id="display"></div>
@@ -41,7 +42,7 @@ class ShapesGame extends HTMLElement {
       </div>
       <div class="message" id="message"></div>
     `;
-    this.shadowRoot.querySelectorAll('.shape').forEach(el => el.addEventListener('click', e => this.handleClick(e)));
+    this.shadowRoot.querySelectorAll('.shape').forEach(el => el.addEventListener('pointerdown', e => this.handleClick(e)));
   }
 
   start() {
@@ -84,6 +85,7 @@ class ShapesGame extends HTMLElement {
     }
     if (this.userInput.length === this.sequence.length) {
       this.score++;
+      addProgress();
       this.updateScore();
       this.nextRound();
     }
@@ -108,10 +110,10 @@ class ShapesGame extends HTMLElement {
       this.best = this.score;
       localStorage.setItem('shapes-best', this.best);
     }
-    msg.textContent = 'Wrong! Click any shape to restart.';
+    msg.textContent = 'Wrong! Tap a shape to restart.';
     this.shadowRoot.getElementById('best').textContent = this.best;
     this.shadowRoot.querySelectorAll('.shape').forEach(el => {
-      el.addEventListener('click', () => {
+      el.addEventListener('pointerdown', () => {
         msg.textContent = '';
         this.start();
       }, { once: true });
