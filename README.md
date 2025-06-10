@@ -2,6 +2,11 @@
 
 Creative coding experiments.
 
+The **brain** project in this repository provides small web games designed to 
+fight brain rot and improve attention, focus, memory and agility. Every game is
+implemented with modern HTML, CSS and JavaScript so they run directly in the
+browser.
+
 This repository contains multiple independent projects. Every project sits in its own folder at the repository root and includes a README with details on how to run it. When the structure of a project changes or new projects are added, update this file for future reference.
 
 ## Projects
